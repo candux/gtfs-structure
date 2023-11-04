@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::sync::Arc;
 
+use serde::{Serialize, Deserialize};
 /// Data structure with all the GTFS objects
 ///
 /// This structure is easier to use than the [RawGtfs] structure as some relationships are parsed to be easier to use.
@@ -20,6 +21,7 @@ use std::sync::Arc;
 ///
 /// The [StopTime] are accessible from the [Trip]
 #[derive(Default)]
+#[derive(Serialize, Deserialize)]
 pub struct Gtfs {
     /// Time needed to read and parse the archive in milliseconds
     pub read_duration: i64,
