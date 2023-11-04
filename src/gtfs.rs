@@ -92,9 +92,7 @@ impl Gtfs {
     ///
     /// To read from an url, build with read-url feature
     /// See also [Gtfs::from_url] and [Gtfs::from_path] if you don’t want the library to guess
-    pub fn new(gtfs: &str) -> Result<Gtfs, Error> {
-        RawGtfs::new(gtfs).and_then(Gtfs::try_from)
-    }
+
 
     /// Reads the GTFS from a local zip archive or local directory
     pub fn from_path<P>(path: P) -> Result<Gtfs, Error>
@@ -104,13 +102,6 @@ impl Gtfs {
         RawGtfs::from_path(path).and_then(Gtfs::try_from)
     }
 
-    /// Reads the GTFS from a remote url
-    ///
-    /// The library must be built with the read-url feature
-    #[cfg(feature = "read-url")]
-    pub fn from_url<U: reqwest::IntoUrl>(url: U) -> Result<Gtfs, Error> {
-        RawGtfs::from_url(url).and_then(Gtfs::try_from)
-    }
 
     /// Asynchronously reads the GTFS from a remote url
     ///

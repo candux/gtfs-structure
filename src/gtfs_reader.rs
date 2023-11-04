@@ -77,28 +77,12 @@ impl GtfsReader {
         self
     }
 
-    /// Reads from an url (if starts with `"http"`), or a local path (either a directory or zipped file)
-    ///
-    /// To read from an url, build with read-url feature
-    /// See also [Gtfs::from_url] and [Gtfs::from_path] if you don’t want the library to guess
-    pub fn read(self, gtfs: &str) -> Result<Gtfs, Error> {
-        self.raw().read(gtfs).and_then(Gtfs::try_from)
-    }
-
     /// Reads the raw GTFS from a local zip archive or local directory
     pub fn read_from_path<P>(self, path: P) -> Result<Gtfs, Error>
     where
         P: AsRef<Path> + std::fmt::Display,
     {
         self.raw().read_from_path(path).and_then(Gtfs::try_from)
-    }
-
-    /// Reads the GTFS from a remote url
-    ///
-    /// The library must be built with the read-url feature
-    #[cfg(feature = "read-url")]
-    pub fn read_from_url<U: reqwest::IntoUrl>(self, url: U) -> Result<Gtfs, Error> {
-        self.raw().read_from_url(url).and_then(Gtfs::try_from)
     }
 
     /// Asynchronously reads the GTFS from a remote url
@@ -173,25 +157,6 @@ impl RawGtfsReader {
         Ok(result)
     }
 
-    /// Reads from an url (if starts with `"http"`) if the feature `read-url` is activated,
-    /// or a local path (either a directory or zipped file)
-    pub fn read(self, gtfs: &str) -> Result<RawGtfs, Error> {
-        #[cfg(feature = "read-url")]
-        if gtfs.starts_with("http") {
-            return self.read_from_url(gtfs);
-        }
-        self.read_from_path(gtfs)
-    }
-
-    /// Reads the GTFS from a remote url
-    #[cfg(feature = "read-url")]
-    pub fn read_from_url<U: reqwest::IntoUrl>(self, url: U) -> Result<RawGtfs, Error> {
-        let mut res = reqwest::blocking::get(url)?;
-        let mut body = Vec::new();
-        res.read_to_end(&mut body)?;
-        let cursor = std::io::Cursor::new(body);
-        self.read_from_reader(cursor)
-    }
 
     /// Asynchronously reads the GTFS from a remote url
     #[cfg(feature = "read-url")]
